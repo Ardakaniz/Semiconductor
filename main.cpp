@@ -131,12 +131,21 @@ class Quantity {
 
 void iter(Quantity& n, Quantity& p, std::vector<double>& electric_field, unsigned int t) {
 	const double K = 1.0; //* == \mu * e / \epsilon
+	const double Cd = 0.0001;
+	const double Ca = 0.0001;
 
 	double qty_integral = n(t, 0) - p(t, 0);
 	for (int j = 0; j < n.get_pos_count(); ++j) {
 		const double dn = 0.5 * (n(t, j + 1) - n(t, j - 1));
 		const double dp = 0.5 * (p(t, j + 1) - p(t, j - 1));
-		const double E = (0.5 * (p(t, 0) + p(t, j) - n(t, 0) - n(t, j))) + qty_integral;
+
+		double atoms_field = 0.0;
+		if (j < n.get_pos_count() / 2)
+			atoms_field = Cd * j;
+		else
+			atoms_field = Cd * ((n.get_pos_count() / 2) - 1) - Ca * (j - n.get_pos_count() / 2);
+
+		const double E = (0.5 * (p(t, 0) + p(t, j) - n(t, 0) - n(t, j))) + qty_integral + atoms_field;
 		
 		electric_field.push_back(E * n.get_pos_step());
 		n(t + 1, j) = n(t, j) + n.get_time_step() * K * (dn * E + (p(t, j) - n(t, j)) * n(t, j));
@@ -161,12 +170,12 @@ int main() {
 		n(0, j) = 0;
 		p(0, j) = 0;
 
-		if (j < 50) {
-			p(0, j) = 0.005;
+		if (j < pos_count / 2) {
+			n(0, j) = 0.0001;
 		}
 
-		if (j >= pos_count - 50) {
-			n(0, j) = 0.005;
+		if (j >= pos_count / 2) {
+			p(0, j) = 0.0001;
 		}
 	}
 
