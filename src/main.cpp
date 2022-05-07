@@ -10,14 +10,14 @@ void iter(Quantity& n, Quantity& p, std::vector<double>& electric_field, unsigne
 	const double Ca = 0.0001;
 
 	double qty_integral = n(t, 0) - p(t, 0);
-	for (int j = 0; j < n.get_pos_count(); ++j) {
+	for (int j = 0; j < static_cast<int>(n.get_pos_count()); ++j) {
 		const double dn = 0.5 * (n(t, j + 1) - n(t, j - 1));
 		const double dp = 0.5 * (p(t, j + 1) - p(t, j - 1));
 		const double ddn = 0;//(n(t, j + 1) + n(t, j - 1) - 2 * n(t, j)) / (n.get_pos_step() * n.get_pos_step());
 		const double ddp = 0;//(p(t, j + 1) + p(t, j - 1) - 2 * p(t, j)) / (p.get_pos_step() * p.get_pos_step());
 
 		double atoms_field = 0.0;
-		if (j < n.get_pos_count() / 2)
+		if (j < static_cast<int>(n.get_pos_count() / 2))
 			atoms_field = Cd * j;
 		else
 			atoms_field = Cd * ((n.get_pos_count() / 2) - 1) - Ca * (j - n.get_pos_count() / 2);
@@ -84,8 +84,8 @@ int main() {
 		}*/
 	}
 
-	Quantity Cd{ time_end / static_cast<double>(time_count), time_count, pos_end / static_cast<double>(pos_count), pos_count };
-	Quantity Ca{ time_end / static_cast<double>(time_count), time_count, pos_end / static_cast<double>(pos_count), pos_count };
+	Quantity Cd{ time_step, time_count, pos_step, pos_count };
+	Quantity Ca{ time_step, time_count, pos_step, pos_count };
 	for (unsigned int t = 0; t < time_count; ++t) {
 		for (unsigned int j = 0; j < pos_count; ++j) {
 			if (j < pos_count / 2) {
