@@ -19,8 +19,17 @@ Quantity::Quantity(double time_step, unsigned int time_count, double pos_step, u
 }
 
 Quantity& Quantity::operator+=(const Quantity& other) {
-	for (unsigned int t = 0; t < m_time_count; ++t) {
-		for (unsigned int p = 0; p < m_pos_count; ++p) {
+	if (m_pos_count != other.m_pos_count)
+		throw std::runtime_error("Quantity::operator+=: incompatible position count");
+	if (m_time_count < other.m_time_count) {
+		if (m_fixed_time_count)
+			throw std::runtime_error("Quantity::operator+=: incompatible time count");
+		else
+			add_time(other.m_time_count - m_time_count);
+	}
+
+	for (unsigned int t = 0; t < other.m_time_count; ++t) {
+		for (unsigned int p = 0; p < other.m_pos_count; ++p) {
 			m_data[t * m_pos_count + p] += other.m_data[t * m_pos_count + p];
 		}
 	}
@@ -28,8 +37,17 @@ Quantity& Quantity::operator+=(const Quantity& other) {
 }
 
 Quantity& Quantity::operator-=(const Quantity& other) {
-	for (unsigned int t = 0; t < m_time_count; ++t) {
-		for (unsigned int p = 0; p < m_pos_count; ++p) {
+	if (m_pos_count != other.m_pos_count)
+		throw std::runtime_error("Quantity::operator+=: incompatible position count");
+	if (m_time_count < other.m_time_count) {
+		if (m_fixed_time_count)
+			throw std::runtime_error("Quantity::operator+=: incompatible time count");
+		else
+			add_time(other.m_time_count - m_time_count);
+	}
+
+	for (unsigned int t = 0; t < other.m_time_count; ++t) {
+		for (unsigned int p = 0; p < other.m_pos_count; ++p) {
 			m_data[t * m_pos_count + p] -= other.m_data[t * m_pos_count + p];
 		}
 	}
