@@ -18,8 +18,8 @@ void iter(Quantity& n, Quantity& p, const Quantity& Cd, const Quantity& Ca, std:
 		const double total_charges = p(t, j) - n(t, j) + (Cd(t, j) - Ca(t, j));
 		
 		electric_field.push_back(E * n.get_pos_step());
-		n(t + 1, j) = n(t, j) + 0.5 * n.get_time_step() * (K * (dn * E + total_charges * n(t, j)) + ddn);
-		p(t + 1, j) = p(t, j) - 0.5 * p.get_time_step() * (K * (dp * E + total_charges * p(t, j)) + ddp);
+		n(t + 1, j) = n(t, j) + n.get_time_step() * (K * (dn * E + total_charges * n(t, j)) + ddn);
+		p(t + 1, j) = p(t, j) - p.get_time_step() * (K * (dp * E + total_charges * p(t, j)) - ddp);
 
 		qty_integral += total_charges;
 	}
